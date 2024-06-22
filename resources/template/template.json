@@ -1,0 +1,130 @@
+{
+  "log": {
+    "level": "info",
+    "timestamp": false
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "resources/db/cache.db"
+    },
+    "clash_api": {
+      "default_mode": "rule",
+      "external_controller": "0.0.0.0:9090",
+      "external_ui": "resources/ui/proxy"
+    }
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "remote",
+        "address": "https://1.1.1.1/dns-query",
+        "address_strategy": "ipv4_only",
+        "strategy": "prefer_ipv4",
+        "detour": "proxy"
+      },
+      {
+        "tag": "local",
+        "address": "https://223.6.6.6/dns-query",
+        "address_strategy": "ipv4_only",
+        "strategy": "prefer_ipv4",
+        "detour": "direct"
+      },
+      {
+        "tag": "block",
+        "address": "rcode://success"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "local"
+      },
+      {
+        "rule_set": "geosite-cn",
+        "server": "local"
+      },
+      {
+        "clash_mode": "global",
+        "server": "remote"
+      }
+    ],
+    "final": "remote"
+  },
+  "inbounds": [
+    {
+      "listen": "::",
+      "listen_port": 8888,
+      "set_system_proxy": false,
+      "sniff": true,
+      "tag": "mixed-in",
+      "type": "mixed"
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "proxy",
+      "type": "selector",
+      "outbounds": [
+        "auto",
+        "direct"
+      ]
+    },
+    {
+      "tag": "auto",
+      "type": "urltest",
+      "outbounds": [],
+      "url": "http://www.gstatic.com/generate_204",
+      "interval": "10m",
+      "tolerance": 50
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "protocol": "dns",
+        "outbound": "dns-out"
+      },
+      {
+        "clash_mode": "global",
+        "outbound": "proxy"
+      },
+      {
+        "rule_set": "geosite-cn",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": "geoip-cn",
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "tag": "geoip-cn",
+        "type": "local",
+        "format": "binary",
+        "path": "resources/geo/geoip-cn.srs"
+      },
+      {
+        "tag": "geosite-cn",
+        "type": "local",
+        "format": "binary",
+        "path": "resources/geo/geosite-cn.srs"
+      }
+    ],
+    "auto_detect_interface": true,
+    "final": "proxy"
+  }
+}
