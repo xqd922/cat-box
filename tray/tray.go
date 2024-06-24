@@ -5,6 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/daifiyum/cat-box/singbox"
+	"github.com/daifiyum/cat-box/utils"
 	"github.com/energye/systray"
 )
 
@@ -12,6 +13,13 @@ var (
 	IsProxy  bool
 	SysProxy *systray.MenuItem
 )
+
+func init() {
+	err := utils.SetProcessDPIAware()
+	if err != nil {
+		fmt.Println("Failed to set process DPI aware:", err)
+	}
+}
 
 func SetServiceMode() {
 	if SysProxy.Checked() {

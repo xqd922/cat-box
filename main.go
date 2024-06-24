@@ -4,8 +4,6 @@ import (
 	"github.com/daifiyum/cat-box/singbox"
 	"github.com/daifiyum/cat-box/subservice"
 	"github.com/daifiyum/cat-box/tray"
-
-	// Register toast id
 	_ "github.com/daifiyum/cat-box/utils"
 	"github.com/energye/systray"
 )

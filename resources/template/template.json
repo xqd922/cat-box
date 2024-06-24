@@ -98,6 +98,10 @@
         "outbound": "dns-out"
       },
       {
+        "protocol": "quic",
+        "outbound": "block"
+      },
+      {
         "clash_mode": "global",
         "outbound": "proxy"
       },
