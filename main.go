@@ -14,7 +14,6 @@ func main() {
 
 func onReady() {
 	tray.InitTray()
-	tray.CreateItem()
 	subservice.SubService()
 }
 
