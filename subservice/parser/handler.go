@@ -70,9 +70,6 @@ func parseSubscribe(links []string) ([]map[string]interface{}, error) {
 }
 
 func Handler(url string) ([]byte, error) {
-	// url := "https://api.cherrynetwork.pro/api/v1/client/subscribe?token=9caaa4a6918d26c438577dc4b514071a"
-	// url := "https://accd.zhiyin.asia/link/6zn4iIQrcClCpHWX?clash=1"
-	// url := "https://rss.rsssub.top/subscribe?token=92a3558bb959c4e92ed6d2b28f97aab9"
 	req, err := fetchSubscribe(url)
 	if err != nil {
 		return nil, err

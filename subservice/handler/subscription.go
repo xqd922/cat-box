@@ -9,6 +9,7 @@ import (
 
 	"github.com/daifiyum/cat-box/singbox"
 	"github.com/daifiyum/cat-box/tray"
+	"github.com/daifiyum/cat-box/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -81,9 +82,15 @@ func OperateSubscribe(c *fiber.Ctx) error {
 		db.Save(subscribe)
 		if subscribe.Active {
 			if tray.GetIsProxy() {
-				singbox.Reload(subscribe.Data)
+				err := singbox.Reload(subscribe.Data)
+				if err != nil {
+					utils.LogError("Failed to reload sing-box")
+				}
 			} else {
-				singbox.SaveConfig(subscribe.Data)
+				err := singbox.SaveConfig(subscribe.Data)
+				if err != nil {
+					utils.LogError("Failed to save config")
+				}
 			}
 		}
 		return c.JSON(fiber.Map{"status": "success", "message": "Subscribe successfully updated", "data": nil})
@@ -95,9 +102,15 @@ func OperateSubscribe(c *fiber.Ctx) error {
 	}
 	db.Exec("UPDATE subscriptions SET active = CASE WHEN id = ? THEN 1 ELSE 0 END", id)
 	if tray.GetIsProxy() {
-		singbox.Reload(subscribe.Data)
+		err := singbox.Reload(subscribe.Data)
+		if err != nil {
+			utils.LogError("Failed to reload sing-box")
+		}
 	} else {
-		singbox.SaveConfig(subscribe.Data)
+		err := singbox.SaveConfig(subscribe.Data)
+		if err != nil {
+			utils.LogError("Failed to save config")
+		}
 	}
 	return c.JSON(fiber.Map{"status": "success", "message": "Subscribe successfully active", "data": nil})
 }

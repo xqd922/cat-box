@@ -1,15 +1,12 @@
 package singbox
 
 import (
-	"fmt"
-
 	"os"
 	"os/exec"
 	"syscall"
 
 	"github.com/daifiyum/cat-box/config"
 	"github.com/daifiyum/cat-box/utils"
-	"github.com/gofiber/fiber/v2/log"
 	"golang.org/x/sys/windows"
 )
 
@@ -63,7 +60,6 @@ func Start() error {
 	}
 	err = cmd.Start()
 	if err != nil {
-		fmt.Printf("启动程序失败: %v\n", err)
 		return err
 	}
 	return nil
@@ -77,11 +73,8 @@ func Stop() error {
 	if isProcessRunning(uint32(cmd.Process.Pid)) {
 		err := cmd.Process.Signal(syscall.SIGKILL)
 		if err != nil {
-			fmt.Printf("中断程序失败: %v\n", err)
 			return err
 		}
-	} else {
-		fmt.Println("程序已退出")
 	}
 	DisableProxy()
 	cmd = nil
@@ -91,7 +84,6 @@ func Stop() error {
 func SaveConfig(data string) error {
 	err := os.WriteFile(config.Config("CONFIG_PATH"), []byte(data), 0666)
 	if err != nil {
-		log.Error("write config failed", err)
 		return err
 	}
 	return nil
@@ -104,12 +96,10 @@ func Reload(data string) error {
 	}
 	err = Stop()
 	if err != nil {
-		log.Error("Failed to reload configuration")
 		return err
 	}
 	err = Start()
 	if err != nil {
-		log.Error("Failed to reload configuration")
 		return err
 	}
 	return nil

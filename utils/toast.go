@@ -60,14 +60,9 @@ func RegisterToast(id, name, path string) error {
 
 // APPID 注册 以显示通知图标和名称
 func init() {
-	toastIcon, err := filepath.Abs("./resources/icons/box.ico")
+	toastIcon, _ := filepath.Abs("./resources/icons/box.ico")
+	err := RegisterToast("cat-box", "cat-box", toastIcon)
 	if err != nil {
-		fmt.Println(err)
-	}
-	err = RegisterToast("cat-box", "cat-box", toastIcon)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Register toast successfully")
+		LogError(err.Error())
 	}
 }

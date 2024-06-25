@@ -1,7 +1,6 @@
 package tray
 
 import (
-	"fmt"
 	"os/exec"
 	"syscall"
 
@@ -19,7 +18,7 @@ var (
 func init() {
 	err := utils.SetProcessDPIAware()
 	if err != nil {
-		fmt.Println("Failed to set process DPI aware:", err)
+		utils.LogError(err.Error())
 	}
 }
 
@@ -42,7 +41,7 @@ func OpenBrowser(url string) {
 	}
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println("Failed to open browser:", err)
+		utils.LogError("Failed to open browser")
 	}
 }
 
@@ -99,13 +98,18 @@ func InitTray() {
 
 	systray.SetOnClick(func(menu systray.IMenu) {
 		if IsProxy {
-			singbox.Stop()
+			err := singbox.Stop()
+			if err != nil {
+				utils.LogError("Failed to stop sing-box")
+				return
+			}
 			systray.SetIcon(AppIcon)
 			IsProxy = false
 		} else {
 			SetServiceMode()
 			err := singbox.Start()
 			if err != nil {
+				utils.LogError("Failed to start sing-box")
 				return
 			}
 			systray.SetIcon(ProxyIcon)

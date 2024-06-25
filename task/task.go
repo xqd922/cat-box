@@ -6,7 +6,7 @@ import (
 	"github.com/daifiyum/cat-box/subservice/models"
 	"github.com/daifiyum/cat-box/subservice/parser"
 	"github.com/daifiyum/cat-box/tray"
-	"github.com/gofiber/fiber/v2/log"
+	"github.com/daifiyum/cat-box/utils"
 
 	"github.com/robfig/cron/v3"
 )
@@ -21,7 +21,7 @@ func handleUpdate() {
 		if subscription.AutoUpdate {
 			config, err := parser.Handler(subscription.Link)
 			if err != nil {
-				log.Error("Failed to generate configuration")
+				utils.LogError("Failed to generate configuration")
 				continue
 			}
 			db.Model(&subscription).Where(subscription.ID).Update("data", config)
@@ -29,19 +29,19 @@ func handleUpdate() {
 				if tray.GetIsProxy() {
 					err = singbox.Reload(string(config))
 					if err != nil {
-						log.Error("Failed to reload configuration")
+						utils.LogError("Failed to reload configuration")
 						continue
 					}
 				} else {
 					singbox.SaveConfig(string(config))
 				}
 			}
-			log.Info("Automatic update successful")
+			utils.LogInfo("Automatic update successful")
 		}
 	}
 }
 
-func InitScheduler() error {
+func InitScheduler() {
 	db := database.DB
 	options := new(models.Options)
 	db.Model(options).Where("name=?", "options").First(options)
@@ -50,10 +50,9 @@ func InitScheduler() error {
 		handleUpdate()
 	})
 	scheduler.Start()
-	return nil
 }
 
-func Scheduler(delay string) error {
+func Scheduler(delay string) {
 	if scheduler != nil {
 		scheduler.Stop()
 	}
@@ -63,5 +62,4 @@ func Scheduler(delay string) error {
 		handleUpdate()
 	})
 	scheduler.Start()
-	return nil
 }
