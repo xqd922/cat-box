@@ -10,7 +10,8 @@ import (
 
 // ConnectDB connect to db
 func ConnectDB() error {
-	DB, err := gorm.Open(sqlite.Open(config.Config("DB_PATH")), &gorm.Config{})
+	var err error
+	DB, err = gorm.Open(sqlite.Open(config.Config("DB_PATH")), &gorm.Config{})
 
 	if err != nil {
 		return err
