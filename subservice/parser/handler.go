@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2/log"
+	"github.com/hiddify/ray2sing/ray2sing"
 	"github.com/valyala/fasthttp"
 )
 
@@ -33,7 +34,7 @@ func decodeSubscribe(body []byte) ([]string, error) {
 	}
 
 	bodyStr := string(decodedBody)
-	regex := regexp.MustCompile(`(ss|vmess|trojan|vless|hysteria|hysteria2|shadowtls)://([^\s]+)`)
+	regex := regexp.MustCompile(`(ss|vmess|trojan|vless|hysteria|hysteria2)://([^\s]+)`)
 	matches := regex.FindAllStringSubmatch(bodyStr, -1)
 
 	var nodes []string
@@ -53,20 +54,64 @@ func parseSubscribe(links []string) ([]map[string]interface{}, error) {
 
 		switch prot[0] {
 		case "ss":
-			node, err := Shadowsocks(link)
+			node, err := ray2sing.ShadowsocksSingbox(link)
 			if err != nil {
 				return nil, err
 			}
-			outbounds = append(outbounds, node)
+			mapNode, _ := StructToMap(node)
+			outbounds = append(outbounds, mapNode)
 		case "vmess":
-			node, err := Vmess(link)
+			node, err := ray2sing.VmessSingbox(link)
 			if err != nil {
 				return nil, err
 			}
-			outbounds = append(outbounds, node)
+			mapNode, _ := StructToMap(node)
+			outbounds = append(outbounds, mapNode)
+		case "trojan":
+			node, err := ray2sing.TrojanSingbox(link)
+			if err != nil {
+				return nil, err
+			}
+			mapNode, _ := StructToMap(node)
+			outbounds = append(outbounds, mapNode)
+		case "vless":
+			node, err := ray2sing.VlessSingbox(link)
+			if err != nil {
+				return nil, err
+			}
+			mapNode, _ := StructToMap(node)
+			outbounds = append(outbounds, mapNode)
+		case "hysteria":
+			node, err := ray2sing.HysteriaSingbox(link)
+			if err != nil {
+				return nil, err
+			}
+			mapNode, _ := StructToMap(node)
+			outbounds = append(outbounds, mapNode)
+		case "hysteria2":
+			node, err := ray2sing.Hysteria2Singbox(link)
+			if err != nil {
+				return nil, err
+			}
+			mapNode, _ := StructToMap(node)
+			outbounds = append(outbounds, mapNode)
 		}
 	}
 	return outbounds, nil
+}
+
+func StructToMap(obj interface{}) (map[string]interface{}, error) {
+	jsonBytes, err := json.Marshal(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	var result map[string]interface{}
+	err = json.Unmarshal(jsonBytes, &result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func Handler(url string) ([]byte, error) {
