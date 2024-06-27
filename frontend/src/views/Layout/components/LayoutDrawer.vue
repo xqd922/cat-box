@@ -14,22 +14,13 @@
         clearable
         @blur="setUpdateDelay"
       ></v-text-field>
-
-      <v-btn
-        color="primary"
-        block
-        prepend-icon="mdi-close-circle-outline"
-        @click="stopProxy"
-      >
-        停止sing-box
-      </v-btn>
     </v-container>
   </v-navigation-drawer>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getDelay, setDelay, stopSingBox } from "@/api/config";
+import { getDelay, setDelay } from "@/api/config";
 import { storeToRefs } from "pinia";
 import { useDrawerStore } from "@/stores/drawer";
 const drawerStore = useDrawerStore();
@@ -43,10 +34,6 @@ onMounted(async () => {
 });
 async function setUpdateDelay() {
   await setDelay({ update_delay: updateDelay.value });
-}
-
-async function stopProxy() {
-  await stopSingBox();
 }
 </script>
 

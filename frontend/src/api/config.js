@@ -19,11 +19,3 @@ export function setDelay(data) {
     },
   });
 }
-
-// 停止sing-box
-export function stopSingBox() {
-  return service({
-    method: "PUT",
-    url: "/singbox",
-  });
-}

@@ -34,8 +34,4 @@ func SetupRoutes(app *fiber.App) {
 	subscribe.Delete("/:id", middleware.Protected(), handler.DeleteSubscribe)
 	subscribe.Put("/:id", middleware.Protected(), handler.EditSubscribe)
 	subscribe.Patch("/:id", middleware.Protected(), handler.OperateSubscribe)
-
-	// Singbox
-	singbox := api.Group("/singbox")
-	singbox.Put("/", middleware.Protected(), handler.StopSingbox)
 }
