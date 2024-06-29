@@ -103,6 +103,7 @@ func InitTray() {
 				utils.LogError("Failed to stop sing-box")
 				return
 			}
+			singbox.DisableProxy()
 			systray.SetIcon(AppIcon)
 			IsProxy = false
 		} else {

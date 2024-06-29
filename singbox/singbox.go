@@ -76,7 +76,6 @@ func Stop() error {
 			return err
 		}
 	}
-	DisableProxy()
 	cmd = nil
 	return nil
 }
